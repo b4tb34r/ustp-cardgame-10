@@ -1,0 +1,37 @@
+name: Build and Release
+
+on:
+  release:
+    types: [published]   # run when a new release is published
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run build
+        run: npm run build
+
+      - name: Package build output
+        run: |
+          mkdir -p dist-zip
+          zip -r dist-zip/app.zip ./dist   # adjust ./dist to your build output folder
+
+      - name: Upload release asset
+        uses: softprops/action-gh-release@v1
+        with:
+          files: dist-zip/app.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
