@@ -1,8 +1,9 @@
 name: Build and Release
 
 on:
-  release:
-    types: [published]   # run when a new release is published
+  push:
+    tags:
+      - "v*.*.*"
 
 jobs:
   build:
@@ -30,7 +31,7 @@ jobs:
           zip -r dist-zip/app.zip ./dist   # adjust ./dist to your build output folder
 
       - name: Upload release asset
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           files: dist-zip/app.zip
         env:
